@@ -1,0 +1,121 @@
+@startuml
+
+class Player extends Actor
+class Skeleton extends Actor
+class Cell implements Drawable
+Tiles o-- Tile
+GameMap *-- Tile
+GameMap *-- Main
+GameMap o-- MapLoader
+Cell <|-- GameMap
+MapLoader <|-- CellType
+
+class Actor {
+    -cell : Cell
+    -health : int=10
+
+    +Actor(Cell cell)
+
+    +void move(int dx, int dy)
+    +getHealth() : int
+    +getCell() : Cell
+    +getX() : int
+    +getY() : int
+}
+
+class Player {
+    +Player(Cell cell)
+
+    +getTileName() : String
+}
+
+class Skeleton {
+    +Skeleton(Cell cell)
+
+    +getTileName() : String
+}
+
+class Cell {
+    -type : CellType
+    -actor : Actor
+    -gameMap : GameMap
+    -x, y : int
+
+    +Cell(Gamemap gameMap, int x, int y, CellType type)
+
+    +getType() : CellType
+    +void setType(Type type)
+    +void setActor(Actor actor)
+    +getActor() : Actor
+    +getNeighbour(int dx, int dy) : Cell
+    +getTileName() : String
+    +getX() : int
+    +getY() : int
+}
+
+enum CellType {
+    -tileName() : String
+
+    EMPTY
+    FLOOR
+    WALL
+
+    +CellType(String tileName)
+
+    +getTileName() : String
+}
+
+interface Drawable {
+    String getTileName()
+}
+
+class GameMap {
+    -width: int
+    -high : int
+    -cells : Cell[][]
+    -player : Player
+
+    +GameMap(int width, int high, CellType defaultCellType)
+
+    +getCell(int x, int y) : Cell
+    +void setPlayer(Player player)
+    +getPlayer() : Player
+    +getWidth() : int
+    +getHeight() : int
+}
+
+class MapLoader {
+    +{static} load : GameMap
+}
+
+class App {
+    +void main(String[] args)
+}
+
+class Main {
+    map: GameMap
+    canvas: Canvas
+    context: GraphicsContext
+    healthLabel: Label
+
+    +void main(String[] args)
+    +void start(Stage primaryStage)
+    +void onKeyPressed(KeyEvent keyEvent)
+    +void refresh()
+}
+
+class Tiles {
+    +{static} TILE_WIDTH: int=32
+    -{static} tileset: Image
+    -{static} tileMap: Map<String, Tile>
+
+    +void drawTile(GraphicsContext context, Drawable d, int x, int y)
+}
+
+class Tile {
+    +x, y, w, h: int
+
+    +Tile(int i, int j)
+}
+
+@enduml
